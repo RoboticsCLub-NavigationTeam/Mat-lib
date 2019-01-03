@@ -10,21 +10,10 @@
 #define _MAT_H_
 
 #include <math.h>
-#include <stdio.h>
-#include <stdint.h>
+#include "vec3.h"
 
-#define MAX_MATRIX_ROWS         5
-#define MAX_MATRIX_COLS         5
-
-void _Error_Handler(const char *file, size_t line);
-
-template <typename T>
-void swap_Element(T &first, T &second)
-{
-        T temp = first;
-        first = second;
-        second = temp;
-}
+#define MAX_MATRIX_ROWS         4
+#define MAX_MATRIX_COLS         4
 
 class Mat
 {
@@ -35,8 +24,8 @@ public:
         Mat &operator=(Mat &&) = default;
         ~Mat() { }
 
-        uint8_t rows() { return rows_; }
-        uint8_t cols() { return cols_; }
+        uint8_t rows() const { return rows_; }
+        uint8_t cols() const { return cols_; }
 
         inline float &at(uint8_t i, uint8_t j) {
                 if (!(i < rows_ && j < cols_)) {
@@ -58,6 +47,7 @@ public:
         Mat &operator+=(const Mat &rhs);
         Mat &operator-=(const Mat &rhs);
         Mat &operator*=(const Mat &rhs);
+        Mat &operator*=(const Vec3<float> &rhs);
 
         friend Mat operator+(Mat lhs, const Mat &rhs) {
                 lhs += rhs;
@@ -70,6 +60,11 @@ public:
         }
 
         friend Mat operator*(Mat lhs, const Mat &rhs) {
+                lhs *= rhs;
+                return lhs;
+        }
+
+        friend Mat operator*(Mat lhs, const Vec3<float> &rhs) {
                 lhs *= rhs;
                 return lhs;
         }
@@ -100,7 +95,7 @@ public:
 
         static Mat eye(uint8_t n);
 
-        bool is_Zero();
+        bool is_Zero() const;
         void swap_Rows(uint8_t a, uint8_t b);
         void swap_Cols(size_t a, size_t b);        
         bool inv(Mat &inv) const;
