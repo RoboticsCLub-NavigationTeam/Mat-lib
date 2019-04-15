@@ -12,13 +12,19 @@
 #include <math.h>
 #include "vec3.h"
 
-#define MAX_MATRIX_ROWS         4
-#define MAX_MATRIX_COLS         4
+#define MAX_MATRIX_ROWS         (6)
+#define MAX_MATRIX_COLS         (6)
 
 class Mat
 {
 public:
         Mat() : Mat(0,0) { }
+        
+        template <size_t M, size_t N>
+        Mat(const float (&mat)[M][N]) : Mat(M,N){
+                fill(mat);
+        }
+
         Mat(uint8_t rows, uint8_t columns);
         Mat(Mat &&) = default;
         Mat &operator=(Mat &&) = default;
@@ -73,10 +79,25 @@ public:
         Mat mult_EW(float num);
         Mat transpose();
 
+        // Just an alias for getting transpose of a matrix
+        inline Mat trans() { return transpose(); }
+
         void fill(float num) {
                 for (uint8_t i = 0; i < rows_; ++i) {
                         for (uint8_t j = 0; j < cols_; ++j) {
                                 matrix_[i][j] = num;
+                        }
+                }
+        }
+
+        template <size_t M, size_t N>
+        void fill(const float (&mat)[M][N]) {
+                if (M != rows_ && N != cols_) {
+                        _Error_Handler(__FILE__, __LINE__);
+                }
+                for (uint8_t i = 0; i < M; ++i) {
+                        for (uint8_t j = 0; j < N; ++j) {
+                                matrix_[i][j] = mat[i][j];
                         }
                 }
         }
@@ -114,7 +135,7 @@ public:
         void print() const {
                 for (uint8_t i = 0; i < rows_; ++i) {
                         for (uint8_t j = 0; j < cols_; ++j) {
-                                printf("%0.2f\t", matrix_[i][j]);
+                                printf("%ld\t", (int32_t)matrix_[i][j]);
                         }
                         printf("\n");
                 }
@@ -126,6 +147,8 @@ private:
         
         friend void swap(Mat &first, Mat &second);
 };
+
+Mat solve(Mat A, Mat B);
 
 
 #endif // !_MAT_H_

@@ -11,7 +11,7 @@
 
 Mat::Mat(uint8_t rows, uint8_t columns)
 {
-        if (!(rows < MAX_MATRIX_ROWS && columns < MAX_MATRIX_COLS)) {
+        if (rows > MAX_MATRIX_ROWS || columns > MAX_MATRIX_COLS) {
                 _Error_Handler(__FILE__, __LINE__);
         }
         rows_ = rows;
@@ -307,4 +307,10 @@ bool Mat::inv(Mat &inv) const
         //printf("X:\n"); X.print();
         inv = P;
         return true;
+}
+
+Mat solve(Mat A, Mat B)
+{
+        Mat X = A.inv() * B;
+        return X;
 }

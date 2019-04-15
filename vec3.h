@@ -9,10 +9,8 @@
 #ifndef _VEC3_H_
 #define _VEC3_H_
 
-#include <stdio.h>
-#include <stdint.h>
-
-void _Error_Handler(const char *file, size_t line);
+#include "stm32f4xx_hal.h"
+#include "main.h"
 
 template <typename T>
 void swap_Element(T &first, T &second)
@@ -28,6 +26,7 @@ class Vec3
 public:
         Vec3() { set_Values(0,0,0); }
         Vec3(T x, T y, T z) { set_Values(x,y,z); }
+
         Vec3(Vec3 &&) = default;
         Vec3 &operator=(Vec3 &&) = default;
         ~Vec3() { }
@@ -153,6 +152,14 @@ public:
                 z_ -= rhs.z_;
 
                 return *this;
+        }
+
+        // @return true if all the elements is less than tolerance value else false
+        bool is_AbsLess(T tol) {
+                if (abs(x_) <= tol && abs(y_) <= tol && abs(z_) <= tol) {
+                        return true;
+                }
+                return false;
         }
 
         friend Vec3 operator+(Vec3 lhs, const Vec3 &rhs) {
